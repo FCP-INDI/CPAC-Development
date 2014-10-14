@@ -2,6 +2,16 @@ import sys
 
 def remove_working_folders(node_type, working_dir):
 
+    # this function is meant to safely delete any folders in the CPAC working
+    # directory so that a user can easily select what they wish to re-run
+    # without having to dig through the working directory themselves
+
+    # documentation will have to warn of deleting prerequisites and its impact
+    # on needing to re-run everything after them
+
+    # for now, usage:
+    #    python remove_working_folders 'one of the left-hand strings below' '/path/to/working/directory'
+
     import os
     import shutil
 
