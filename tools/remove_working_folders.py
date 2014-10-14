@@ -10,7 +10,7 @@ def remove_working_folders(node_type, working_dir):
     # on needing to re-run everything after them
 
     # for now, usage:
-    #    python remove_working_folders 'one of the left-hand strings below' '/path/to/working/directory'
+    #    python remove_working_folders.py 'one of the left-hand strings below' '/path/to/working/directory'
 
     import os
     import shutil
