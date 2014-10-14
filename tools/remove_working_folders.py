@@ -6,6 +6,12 @@ def remove_working_folders(node_type, working_dir):
     # directory so that a user can easily select what they wish to re-run
     # without having to dig through the working directory themselves
 
+    # this can be integrated into CPAC later as part of the GUI, maybe either
+    # within the pipeline configuration editor in 'Output Settings'
+    #     i.e. "Select outputs to re-run" and have a clickable list of the
+    #     left-hand strings below within node_labels
+    # OR, can be one of the utilities available in a drop-down menu later
+
     # documentation will have to warn of deleting prerequisites and its impact
     # on needing to re-run everything after them
 
