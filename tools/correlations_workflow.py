@@ -2,7 +2,7 @@ import os
 import sys
 
 # Nipype Nipy 0.10.0 Release
-sys.path.insert(0, '/custom/nipype/path')
+sys.path.insert(0, '/path/to/custom/nipype')
 
 
 
@@ -483,7 +483,7 @@ def correlations_workflow(old_files_dict, new_files_dict, pipeline_names, num_co
 
 
 
-def main_shit(old_outputs_path, new_outputs_path, num_cores, match_filepaths, calculate_correlation):
+def main_proc(old_outputs_path, new_outputs_path, num_cores, match_filepaths, calculate_correlation):
 
     pipeline_names = [old_outputs_path.split('/')[len(old_outputs_path.split('/'))-1],new_outputs_path.split('/')[len(new_outputs_path.split('/'))-1]]
 
@@ -497,6 +497,6 @@ def main_shit(old_outputs_path, new_outputs_path, num_cores, match_filepaths, ca
 
 
 
-main_shit(sys.argv[1], sys.argv[2], sys.argv[3], match_filepaths, calculate_correlation)
+main_proc(sys.argv[1], sys.argv[2], sys.argv[3], match_filepaths, calculate_correlation)
 
 
