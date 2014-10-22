@@ -2,7 +2,7 @@ import os
 import sys
 
 # Nipype Nipy 0.10.0 Release
-sys.path.insert(0, '/home/likewise-open/CHILDMIND/steven.giavasis/gitrepos/INSTALL_nipy_nipype_0-10-0/lib/python2.7/site-packages')
+sys.path.insert(0, '/custom/nipype/path')
 
 
 
