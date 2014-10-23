@@ -1,10 +1,6 @@
 import os
 import sys
 
-# Nipype Nipy 0.10.0 Release
-sys.path.insert(0, '/home/likewise-open/CHILDMIND/steven.giavasis/gitrepos/INSTALL_nipy_nipype_0-10-0/lib/python2.7/site-packages')
-
-
 
 def create_unique_file_dict(output_folder_path):
 
@@ -278,34 +274,6 @@ def aggregate_correlations(correlation_info_list):
 
 
 
-def box_plot(dataDict1, pipelines, name):
-
-    from matplotlib import pyplot
-
-    allData = []
-    labels = dataDict1.keys()
-    labels.sort()
-
-    for label in labels:
-        currentData = []
-        currentData.append(dataDict1[label])
-        allData.append(currentData)
-
-    pyplot.boxplot(allData)
-    pyplot.xticks(range(1,(len(dataDict1)+1)),labels,rotation=85)
-    pyplot.margins(0.5,1.0)
-    pyplot.xlabel('Derivatives')
-    pyplot.title('Correlations between %s and %s\n ( %s )'%(pipelines[0], pipelines[1], name))
-
-    #pyplot.show()
-	    
-    pyplot.savefig('%s.pdf'%(name + '_' + pipelines[0] + '_and_' + pipelines[1]), format='pdf', dpi='200', bbox_inches='tight')
-    pyplot.close()
-
-    return pyplot
-
-
-
 def organize_correlations(pearson_dict, concor_dict):
 
     regCorrMap = {}
@@ -440,13 +408,12 @@ def correlations_workflow(old_files_dict, new_files_dict, pipeline_names, num_co
 
     match_filepaths.inputs.old_files_dict = old_files_dict
     match_filepaths.inputs.new_files_dict = new_files_dict
-    #match_filepaths.inputs.output_to_correlate = output_to_correlate
 
 
     calc_correlation = pe.MapNode(util.Function(input_names=['matched_path_list_entry'],
                                             output_names=['correlation_info'],
                                             function=calculate_correlation),
-                                            name='calc_correlation', #_%s' % output_to_correlate,
+                                            name='calc_correlation',
                                             iterfield=['matched_path_list_entry'])
 
     # Join Node necessary to collapse all of the outputs of the parallel Map
@@ -454,8 +421,6 @@ def correlations_workflow(old_files_dict, new_files_dict, pipeline_names, num_co
     aggregate_corrs = pe.Node(util.Function(input_names=['correlation_info_list'],
                                             output_names=['pearson_dict', 'concor_dict', 'pearson_pickle', 'concor_pickle'],
                                             function=aggregate_correlations),
-                                            #joinsource=calc_correlation,
-                                            #joinfield=['correlation_info_list'],
                                             name='aggregate_corrs')
 
 
@@ -495,7 +460,7 @@ def correlations_workflow(old_files_dict, new_files_dict, pipeline_names, num_co
     workflow.connect(organize_corrs, 'corr_map_dicts_list', boxplots, 'corr_map_dicts_list_entry')
 
 
-    workflow.run(plugin='MultiProc', plugin_args={'n_procs': num_cores})
+    workflow.run(plugin='MultiProc', plugin_args={'n_procs': int(num_cores)})
 
 
 
