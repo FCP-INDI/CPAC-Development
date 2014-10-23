@@ -2,7 +2,7 @@ import os
 import sys
 
 # Nipype Nipy 0.10.0 Release
-sys.path.insert(0, '/path/to/custom/nipype')
+sys.path.insert(0, '/home/likewise-open/CHILDMIND/steven.giavasis/gitrepos/INSTALL_nipy_nipype_0-10-0/lib/python2.7/site-packages')
 
 
 
@@ -242,8 +242,6 @@ def aggregate_correlations(correlation_info_list):
     pearson_dict = {}
     concor_dict = {}
 
-    print correlation_info_list
-
     for corr_info in correlation_info_list:
 
         corrTuple = corr_info[0]
@@ -262,11 +260,6 @@ def aggregate_correlations(correlation_info_list):
 
             pearson_dict[corrTuple].append(pearson)
             concor_dict[corrTuple].append(concor)
-
-    print pearson_dict
-    print concor_dict
-
-    raise
 
 
     pearson_pickle = os.path.join(os.getcwd(), 'pearson_dict.p')
@@ -351,7 +344,7 @@ def organize_correlations(pearson_dict, concor_dict):
                 newKey = key[0] + ': ' + key[1]
                 scaMniCorrMap[newKey] = concor_dict[key]
 
-        elif 'standard' in key[0] and 'functional' not in key[0]:
+        elif (('standard' in key[0]) or ('centrality' in key[0]) or ('vmhc' in key[0])) and 'functional' not in key[0]:
 
             if key[1] == 'none':
                 mniCorrMap[key[0]] = concor_dict[key]
@@ -359,7 +352,7 @@ def organize_correlations(pearson_dict, concor_dict):
                 newKey = key[0] + ': ' + key[1]
                 mniCorrMap[newKey] = concor_dict[key]
 
-        elif 'preprocessed' not in key[0] and 'correct' not in key[0] and 'seg' not in key[0] and 'functional' not in key[0] and 'anatomical' not in key[0]:
+        elif 'preprocessed' not in key[0] and 'correct' not in key[0] and 'seg' not in key[0] and 'functional' not in key[0] and 'anatomical' not in key[0] and 'centrality' not in key[0] and 'vmhc' not in key[0]:
 
             if key[1] == 'none':
                 outputCorrMap[key[0]] = concor_dict[key]
@@ -389,14 +382,39 @@ def organize_correlations(pearson_dict, concor_dict):
 
 
 
-def create_boxplots(corr_map_dicts_list_entry, pipeline_names):
+def create_boxplots(corr_map_dicts_list_entry, pipeline_names, current_dir):
+
+    def box_plot(dataDict1, pipelines, name, current_dir):
+
+        from matplotlib import pyplot
+
+        allData = []
+        labels = dataDict1.keys()
+        labels.sort()
+
+        for label in labels:
+            currentData = []
+            currentData.append(dataDict1[label])
+            allData.append(currentData)
+
+        pyplot.boxplot(allData)
+        pyplot.xticks(range(1,(len(dataDict1)+1)),labels,rotation=85)
+        pyplot.margins(0.5,1.0)
+        pyplot.xlabel('Derivatives')
+        pyplot.title('Correlations between %s and %s\n ( %s )'%(pipelines[0], pipelines[1], name))
+
+        #pyplot.show()
+	    
+        pyplot.savefig('%s.pdf'%(current_dir + '/' + name + '_' + pipelines[0] + '_and_' + pipelines[1]), format='pdf', dpi='200', bbox_inches='tight')
+        pyplot.close()
+
+
 
     correlation_dict = corr_map_dicts_list_entry[0]
     correlation_name = corr_map_dicts_list_entry[1]
 
-    boxplot = box_plot(correlation_dict, pipeline_names, correlation_name)
+    box_plot(correlation_dict, pipeline_names, correlation_name, current_dir)
 
-    return boxplot
 
 
 
@@ -433,11 +451,11 @@ def correlations_workflow(old_files_dict, new_files_dict, pipeline_names, num_co
 
     # Join Node necessary to collapse all of the outputs of the parallel Map
     # Nodes of the correlation calculations into one data structure
-    aggregate_corrs = pe.JoinNode(util.Function(input_names=['correlation_info_list'],
+    aggregate_corrs = pe.Node(util.Function(input_names=['correlation_info_list'],
                                             output_names=['pearson_dict', 'concor_dict', 'pearson_pickle', 'concor_pickle'],
                                             function=aggregate_correlations),
-                                            joinsource='calc_correlation',
-                                            joinfield='correlation_info_list',
+                                            #joinsource=calc_correlation,
+                                            #joinfield=['correlation_info_list'],
                                             name='aggregate_corrs')
 
 
@@ -446,13 +464,14 @@ def correlations_workflow(old_files_dict, new_files_dict, pipeline_names, num_co
                                  function=organize_correlations),
                                  name='organize_corrs')
 
-    boxplots = pe.MapNode(util.Function(input_names=['corr_map_dicts_list_entry', 'pipeline_names'],
-                                 output_names=['boxplot'],
+    boxplots = pe.MapNode(util.Function(input_names=['corr_map_dicts_list_entry', 'pipeline_names', 'current_dir'],
+                                 output_names=[],
                                  function=create_boxplots),
                                  name='create_boxplots',
                                  iterfield=['corr_map_dicts_list_entry'])
 
     boxplots.inputs.pipeline_names = pipeline_names
+    boxplots.inputs.current_dir = currentDir
 
 
     datasink = pe.Node(nio.DataSink(), name='sinker')
@@ -475,15 +494,13 @@ def correlations_workflow(old_files_dict, new_files_dict, pipeline_names, num_co
 
     workflow.connect(organize_corrs, 'corr_map_dicts_list', boxplots, 'corr_map_dicts_list_entry')
 
-    workflow.connect(boxplots, 'boxplot', datasink, 'output.@boxplots')
 
-
-    workflow.run(plugin='MultiProc', plugin_args={'n_procs': 6})
+    workflow.run(plugin='MultiProc', plugin_args={'n_procs': num_cores})
 
 
 
 
-def main_proc(old_outputs_path, new_outputs_path, num_cores, match_filepaths, calculate_correlation):
+def main_proc(old_outputs_path, new_outputs_path, num_cores):
 
     pipeline_names = [old_outputs_path.split('/')[len(old_outputs_path.split('/'))-1],new_outputs_path.split('/')[len(new_outputs_path.split('/'))-1]]
 
@@ -497,6 +514,6 @@ def main_proc(old_outputs_path, new_outputs_path, num_cores, match_filepaths, ca
 
 
 
-main_proc(sys.argv[1], sys.argv[2], sys.argv[3], match_filepaths, calculate_correlation)
+main_proc(sys.argv[1], sys.argv[2], sys.argv[3])
 
 
