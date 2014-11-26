@@ -201,26 +201,30 @@ def calculate_correlation(matched_path_list_entry):
 
     # then go through each key's entry and average them all together
 
+    correlation_info = []
+
     id_tuple = matched_path_list_entry[0]
     old_path = matched_path_list_entry[1]
     new_path = matched_path_list_entry[2]
-
 
     ## nibabel to pull the data from the re-assembled file paths
     if os.path.exists(old_path) and os.path.exists(new_path):
         data_1 = nb.load(old_path).get_data()
         data_2 = nb.load(new_path).get_data()
 
-    ## set up and run the Pearson correlation and concordance correlation
-    if data_1.flatten().shape == data_2.flatten().shape:
+        ## set up and run the Pearson correlation and concordance correlation
+        if data_1.flatten().shape == data_2.flatten().shape:
 
-        corrTuple = (id_tuple[0], id_tuple[3])
-        pearson = scipy.stats.pearsonr(data_1.flatten(), data_2.flatten())[0]
-        concor = concordance(data_1.flatten(), data_2.flatten(), pearson)
+            corrTuple = (id_tuple[0], id_tuple[3])
+            pearson = scipy.stats.pearsonr(data_1.flatten(), data_2.flatten())[0]
+            concor = concordance(data_1.flatten(), data_2.flatten(), pearson)
 
-        correlation_info = [corrTuple, pearson, concor]
+            correlation_info = [corrTuple, pearson, concor]
 
+    else:
+        print "%s PATHS NOT FOUND!\n\n" % id_tuple
 
+    
     return correlation_info
 
 
@@ -240,22 +244,24 @@ def aggregate_correlations(correlation_info_list):
 
     for corr_info in correlation_info_list:
 
-        corrTuple = corr_info[0]
-        pearson = corr_info[1]
-        concor = corr_info[2]
+        if len(corr_info) > 0:
 
-        if pearson_dict.get(corrTuple) == None:
+            corrTuple = corr_info[0]
+            pearson = corr_info[1]
+            concor = corr_info[2]
 
-            pCorrList.append(pearson)
-            pearson_dict[corrTuple] = pCorrList
+            if pearson_dict.get(corrTuple) == None:
 
-            cCorrList.append(concor)
-            concor_dict[corrTuple] = cCorrList
+                #pCorrList.append(pearson)
+                pearson_dict[corrTuple] = [pearson] #pCorrList
 
-        else:
+                #cCorrList.append(concor)
+                concor_dict[corrTuple] = [concor] #cCorrList
 
-            pearson_dict[corrTuple].append(pearson)
-            concor_dict[corrTuple].append(concor)
+            else:
+
+                pearson_dict[corrTuple].append(pearson)
+                concor_dict[corrTuple].append(concor)
 
 
     pearson_pickle = os.path.join(os.getcwd(), 'pearson_dict.p')
@@ -411,13 +417,11 @@ def correlations_workflow(old_files_dict, new_files_dict, pipeline_names, num_co
 
 
     calc_correlation = pe.MapNode(util.Function(input_names=['matched_path_list_entry'],
-                                            output_names=['correlation_info'],
+                                            output_names=['correlation_info_list'],
                                             function=calculate_correlation),
                                             name='calc_correlation',
                                             iterfield=['matched_path_list_entry'])
 
-    # Join Node necessary to collapse all of the outputs of the parallel Map
-    # Nodes of the correlation calculations into one data structure
     aggregate_corrs = pe.Node(util.Function(input_names=['correlation_info_list'],
                                             output_names=['pearson_dict', 'concor_dict', 'pearson_pickle', 'concor_pickle'],
                                             function=aggregate_correlations),
@@ -447,7 +451,7 @@ def correlations_workflow(old_files_dict, new_files_dict, pipeline_names, num_co
 
     workflow.connect(match_filepaths, 'matched_path_list', calc_correlation, 'matched_path_list_entry')
 
-    workflow.connect(calc_correlation, 'correlation_info', aggregate_corrs, 'correlation_info_list')
+    workflow.connect(calc_correlation, 'correlation_info_list', aggregate_corrs, 'correlation_info_list')
 
     workflow.connect(aggregate_corrs, 'pearson_pickle', datasink, 'output.@pearson_pickle')
 
