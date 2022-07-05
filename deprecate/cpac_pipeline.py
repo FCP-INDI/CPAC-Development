@@ -354,7 +354,7 @@ def run_workflow(sub_dict, c, run, pipeline_timing_info=None, p_name=None,
 
     with open('/CRITICAL_ALERT.rst', 'r') as critical_alert_file:
         critical_alert = '\n'.join([
-            f'    {line}' for line in critical_alert_file.readlines()])
+            f'    {line.rstrip()}' for line in critical_alert_file.readlines()])
 
     logger.info(information.format(
         cpac_version=CPAC.__version__,
@@ -683,7 +683,8 @@ CPAC run error:
     Elapsed run time (minutes): {elapsed}
     Timing information saved in {log_dir}/cpac_individual_timing_{pipeline}.csv
     System time of start:      {run_start}
-
+    
+{critical_alert}
 """
 
         finally:
@@ -700,7 +701,7 @@ CPAC run error:
                     elapsed=(time.time() - pipeline_start_time) / 60,
                     run_start=pipeline_start_datetime,
                     run_finish=strftime("%Y-%m-%d %H:%M:%S"),
-                    ciritcal_notice=critical_alert
+                    critical_alert=critical_alert
                 ))
 
                 # Remove working directory when done
