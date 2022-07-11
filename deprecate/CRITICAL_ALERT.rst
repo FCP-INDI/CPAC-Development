@@ -1,3 +1,12 @@
+.. Copyright (C) 2022  C-PAC Developers
+.. 
+.. This file is part of CPAC-Development.
+.. 
+.. CPAC-Development is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+.. 
+.. CPAC-Development is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+.. 
+.. You should have received a copy of the GNU Lesser General Public License along with CPAC-Development. If not, see <https://www.gnu.org/licenses/>.
 This version of C-PAC (``${DEPRECATED_VERSION}``) is deprecated due to a bug in ``single_step_resampling``. Unless you have a specific reason to use this version of C-PAC (``${DEPRECATED_VERSION}``), we recommend upgrading to at least version 1.8.4. See https://fcp-indi.github.io/docs/latest/user/release_notes/v1.8.4 for more information about C-PAC v1.8.4. To use ${DEPRECATED_VERSION} anyway, you can pull `fcpindi/c-pac:${DEPRECATED_VERSION}-DEPRECATED` from Docker Hub.
 
 Critical Alert for fMRIPrep-Options in C-PAC v1.8.1 - v1.8.3

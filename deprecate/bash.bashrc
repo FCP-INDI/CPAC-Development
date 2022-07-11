@@ -1,5 +1,7 @@
 # System-wide .bashrc file for interactive bash(1) shells.
 
+# Bash is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
+
 # To enable the settings / commands in this file for login shells as well,
 # this file has to be sourced in /etc/profile.
 
@@ -70,4 +72,5 @@ if [ -x /usr/lib/command-not-found -o -x /usr/share/command-not-found/command-no
 	}
 fi
 
-cat /CRITICAL_ALERT.rst
+# Display CRITICAL ALERT on launch
+grep -v '^\.\. ' /CRITICAL_ALERT.rst

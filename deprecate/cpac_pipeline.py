@@ -1,3 +1,21 @@
+# Copyright (C) 2022  C-PAC Developers
+#
+# This file is part of CPAC-Development and is a modified version of a
+# file that is part of C-PAC.
+#
+# CPAC-Development and C-PAC are free software: you can redistribute
+# them and/or modify them under the terms of the GNU Lesser General
+# Public License as published by the Free Software Foundation, either
+# version 3 of the License, or (at your option) any later version.
+#
+# CPAC-Development and C-PAC are distributed in the hope that they will
+# be useful, but WITHOUT ANY WARRANTY; without even the implied
+# warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+# the GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with CPAC-Development or C-PAC. If not, see
+# <https://www.gnu.org/licenses/>.
 import os
 import time
 import csv
