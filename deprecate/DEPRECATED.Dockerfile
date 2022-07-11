@@ -8,10 +8,13 @@
 
 # You should have received a copy of the GNU Lesser General Public License along with CPAC-Development. If not, see <https://www.gnu.org/licenses/>.
 ARG DEPRECATED_VERSION
+ARG RECOMMENDED_MINIMUM_VERSION
 FROM bash
 ARG DEPRECATED_VERSION
+ARG RECOMMENDED_MINIMUM_VERSION
 COPY ./CRITICAL_ALERT.rst /CRITICAL_ALERT.rst
 COPY ./entrypoint /entrypoint
 RUN sed -i "s|\${DEPRECATED_VERSION}|${DEPRECATED_VERSION}|g" /CRITICAL_ALERT.rst && \
+  sed -i "s|\${RECOMMENDED_MINIMUM_VERSION}|${RECOMMENDED_MINIMUM_VERSION}|g" /CRITICAL_ALERT.rst && \
   ln -s /entrypoint /bin/bash
 ENTRYPOINT [ "/entrypoint" ]
