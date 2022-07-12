@@ -1,0 +1,3 @@
+# Files that should be updated fresh each time
+deprecate/cpac_pipeline.py
+deprecate/run.py

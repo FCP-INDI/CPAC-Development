@@ -4,6 +4,7 @@
 #   3. pushes both images to Docker Hub, overwriting any existing images with the same name.
 #
 # Usage: ./rebuild_and_deprecate $DEPRECATED_TAG $RECOMMENDED_MINIMUM_VERSION
+# See https://fcp-indi.github.io/docs/developer/deprecating for more information
 #
 # Copyright (C) 2022  C-PAC Developers
 
@@ -17,7 +18,7 @@
 
 if [[ $# != 2 ]]
 then
-  head -n 6 $(basename "$0")
+  head -n 7 $(basename "$0")
   exit 0
 fi
 
