@@ -26,5 +26,5 @@ export RECOMMENDED_MINIMUM_VERSION=$2
 docker pull fcpindi/c-pac:${DEPRECATED_TAG}-DEPRECATED
 docker build -t fcpindi/c-pac:${DEPRECATED_TAG}-DEPRECATED --build-arg DEPRECATED_VERSION=${DEPRECATED_TAG} --build-arg RECOMMENDED_MINIMUM_VERSION=${RECOMMENDED_MINIMUM_VERSION} -f redeprecate.Dockerfile .
 docker build -t fcpindi/c-pac:${DEPRECATED_TAG} -f DEPRECATED.Dockerfile --build-arg DEPRECATED_VERSION=${DEPRECATED_TAG} --build-arg RECOMMENDED_MINIMUM_VERSION=${RECOMMENDED_MINIMUM_VERSION} .
-# docker push fcpindi/c-pac:${DEPRECATED_TAG}-DEPRECATED
-# docker push fcpindi/c-pac:${DEPRECATED_TAG}
+docker push fcpindi/c-pac:${DEPRECATED_TAG}-DEPRECATED
+docker push fcpindi/c-pac:${DEPRECATED_TAG}

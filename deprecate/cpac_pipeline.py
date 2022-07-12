@@ -372,7 +372,8 @@ def run_workflow(sub_dict, c, run, pipeline_timing_info=None, p_name=None,
 
     with open('/CRITICAL_ALERT.rst', 'r') as critical_alert_file:
         critical_alert = '\n'.join([
-            f'    {line.rstrip()}' for line in critical_alert_file.readlines()])
+            f'    {line.rstrip()}' for line in
+            critical_alert_file.readlines() if not line.startswith('.. ')])
 
     logger.info(information.format(
         cpac_version=CPAC.__version__,

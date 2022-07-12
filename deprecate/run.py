@@ -214,9 +214,11 @@ def load_cpac_data_config(data_config_file, participant_label,
 
 
 with open('/CRITICAL_ALERT.rst', 'r') as critical_alert_file:
-    critical_alert = critical_alert_file.read()
-
+    critical_alert = ''.join([line for line in
+                              critical_alert_file.readlines() if
+                              not line.startswith('.. ')])
 print(critical_alert)
+
 parser = argparse.ArgumentParser(description='C-PAC Pipeline Runner')
 parser.add_argument('bids_dir', help='The directory with the input dataset '
                                      'formatted according to the BIDS standard. '
