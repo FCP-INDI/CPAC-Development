@@ -1,0 +1,2 @@
+# Usage: CpacProvenance $PATH_TO_SIDECAR.json
+python3 $(dirname $(dirname ${BASH_SOURCE}))/tools/cpac_provenance.py $1
